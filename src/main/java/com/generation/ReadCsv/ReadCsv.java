@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ReadCsv {
-	
+
 	private RabbitTemplate rabbitTemplate;
 
 	public ReadCsv(RabbitTemplate rabbitTemplate) {
@@ -23,7 +23,7 @@ public class ReadCsv {
 
 		String delimitador = ";";
 		String lineData;
-		File csvFile = new File("C:\\projetos-Asapcard\\ReadCsv---Eeve\\input-data.csv");
+		File csvFile = new File("C:\\Users\\johnn\\OneDrive\\Desktop\\Hackaton\\P2\\ReadCsv---Eeve\\input-data.csv");
 
 		try {
 
@@ -42,13 +42,12 @@ public class ReadCsv {
 				jsonObj.put("idade", individualRecordFromCSV[4]);
 				jsonObj.put("valor", individualRecordFromCSV[5]);
 				jsonObj.put("Num_de_Parcelas", individualRecordFromCSV[6]);
-                 System.out.println(jsonObj);
+				System.out.println(jsonObj);
 				arrayofJSONobjects.put(jsonObj.toString());
-				
-				rabbitTemplate.convertAndSend("", "queue-a", jsonObj.toString());
+
+				rabbitTemplate.convertAndSend("queue-a", jsonObj.toString());
 
 			}
-			
 
 		} catch (IOException e) {
 			e.printStackTrace();
