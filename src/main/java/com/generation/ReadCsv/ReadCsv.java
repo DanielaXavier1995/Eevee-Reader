@@ -7,14 +7,23 @@ import java.io.IOException;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ReadCsv {
+	
+	private RabbitTemplate rabbitTemplate;
 
-	public static void main(String[] args) {
+	public ReadCsv(RabbitTemplate rabbitTemplate) {
+		this.rabbitTemplate = rabbitTemplate;
+	}
+
+	public void read() {
 
 		String delimitador = ";";
 		String lineData;
-		File csvFile = new File("C:\\Users\\gabi_\\OneDrive\\Área de Trabalho\\Generation\\Ler arquivos\\ReadCsv\\input-data (1).csv");
+		File csvFile = new File("C:\\projetos-Asapcard\\ReadCsv---Eeve\\input-data.csv");
 
 		try {
 
@@ -25,11 +34,6 @@ public class ReadCsv {
 
 				String[] individualRecordFromCSV = lineData.split(delimitador);
 
-//				System.out.println("ID:" + individualRecordFromCSV[0] + " Data da Transação:"
-//						+ individualRecordFromCSV[1] + "Documento:" + individualRecordFromCSV[2] + "Nome"
-//						+ individualRecordFromCSV[3] + "idade" + individualRecordFromCSV[4] + "valor"
-//						+ individualRecordFromCSV[5] + "Num. de Parcelas" + individualRecordFromCSV[6]);
-
 				JSONObject jsonObj = new JSONObject();
 				jsonObj.put("id", individualRecordFromCSV[0]);
 				jsonObj.put("data_da_Transação", individualRecordFromCSV[1]);
@@ -39,7 +43,9 @@ public class ReadCsv {
 				jsonObj.put("valor", individualRecordFromCSV[5]);
 				jsonObj.put("Num_de_Parcelas", individualRecordFromCSV[6]);
                  System.out.println(jsonObj);
-				arrayofJSONobjects.put(jsonObj);
+				arrayofJSONobjects.put(jsonObj.toString());
+				
+				rabbitTemplate.convertAndSend("", "queue-a", jsonObj.toString());
 
 			}
 			
@@ -48,7 +54,5 @@ public class ReadCsv {
 			e.printStackTrace();
 
 		}
-
 	}
-
 }
